@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -52,8 +54,17 @@ public class StudentController {
 	public String saveStudent(Student student){
 		
 		try {
-			List<Student> studList = getListFromFile();
-			studList.add(student);
+		    studList = getListFromFile();
+		    for(Student stud:studList) {
+		    	    	
+		    	if(stud.getRoll() == student.getRoll() ) {
+		    		
+		    		return("Already this Roll exist");
+		    	}
+			  
+		    }
+		    
+		    studList.add(student);
 			saveIntoFile(studList);
 			return "Success"; 
 			
@@ -64,6 +75,28 @@ public class StudentController {
 	
 	
 	}
+	
+	
+	@DELETE
+	@Path("/Delete/{id}")
+	@Produces(MediaType.APPLICATION_XML)
+	@Consumes(MediaType.APPLICATION_XML)
+	public String deleteStudent(@PathParam("id") int roll){
+	
+			studList = getListFromFile();
+			for(Student stud : studList) {
+				if(stud.getRoll() == roll) {
+					
+					studList.remove(stud);
+					saveIntoFile(studList);
+					return "Deleted Sucessfully";
+				}
+				
+			}
+					
+		return "No Such Roll Exist";
+	}
+	
 	
 	private List<Student> getListFromFile() {
 		File file = new File("D:\\Student_Base.txt");
